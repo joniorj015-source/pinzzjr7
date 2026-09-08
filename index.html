@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PERTANYAAN DARI BAMA</title>
+<style>
+* {margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif;}
+body {background:linear-gradient(135deg,#1e1b4b,#312e81); color:#fff; min-height:100vh; padding:15px;}
+.wadah {max-width:600px; margin:0 auto;}
+
+/* TOMBOL ADMIN MERAH DI POJOK */
+.tombol-admin-pojok {position:fixed; top:10px; right:10px; z-index:9999999;}
+.tombol-besar {
+  padding:15px 25px; font-size:18px; font-weight:bold;
+  background:linear-gradient(135deg,#ef4444,#b91c1c); color:#fff;
+  border:none; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.4);
+  cursor:pointer;
+}
+.tombol-besar:active {transform:scale(0.95);}
+
+.judul {text-align:center; margin-bottom:10px; margin-top:70px;}
+.info-baru {text-align:center; font-size:12px; color:#10b981; margin-bottom:15px;}
+.sembunyi {display:none !important;}
+.kartu {background:rgba(255,255,255,0.1); padding:20px; border-radius:15px; border:1px solid rgba(255,255,255,0.15); margin-bottom:15px;}
+.masukkan {width:100%; padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.3); background:rgba(0,0,0,0.25); color:#fff; margin:8px 0; font-size:15px;}
+label {display:block; margin-top:10px; margin-bottom:4px; font-size:14px; color:#ddd;}
+button {padding:10px 15px; border-radius:8px; border:none; cursor:pointer; font-size:14px; font-weight:bold;}
+.btn-hijau {background:#10b981; color:#fff; width:100%; margin-top:10px;}
+.btn-biru {background:#3b82f6; color:#fff; width:100%; margin-top:10px;}
+.btn-ungu {background:#8b5cf6; color:#fff; width:100%; margin-top:10px;}
+.btn-merah {background:#ef4444; color:#fff;}
+.btn-abu {background:#4b5563; color:#fff;}
+
+/* PILIHAN JAWABAN A B C D */
+.pilihan-jawaban {
+  display:block; width:100%; text-align:left; padding:14px; margin:8px 0;
+  border-radius:10px; background:rgba(255,255,255,0.08); border:2px solid transparent;
+  color:#fff; cursor:pointer; font-size:15px; transition:0.2s;
+}
+.pilihan-jawaban:hover {background:rgba(255,255,255,0.12);}
+.pilihan-jawaban.terpilih {background:rgba(16,185,129,0.25); border-color:#10b981; color:#34d399; font-weight:bold;}
+
+.popup {position:fixed; inset:0; background:rgba(0,0,0,0.9); display:flex; align-items:center; justify-content:center; padding:15px; z-index:999999;}
+.nav {display:flex; gap:6px; flex-wrap:wrap; margin-bottom:15px;}
+.nav button {padding:8px 10px; font-size:13px;}
+.nav .aktif {background:#8b5cf6;}
+.link-khusus {background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.4); padding:10px; border-radius:8px; margin-top:8px; word-break:break-all; font-size:13px; color:#93c5fd;}
+.riwayat-jawaban {background:rgba(0,0,0,0.25); padding:12px; border-radius:8px; margin:8px 0; border-left:3px solid #10b981;}
+hr {border:0; border-top:1px solid rgba(255,255,255,0.2); margin:12px 0;}
+.baris-pemisah {border:0; border-top:2px dashed #666; margin:20px 0;}
+</style>
+</head>
+<body>
+
+<!-- TOMBOL ADMIN MERAH DI POJOK -->
+<div class="tombol-admin-pojok">
+  <button class="tombol-besar" onclick="bukaLoginAdmin()">🔐 ADMIN</button>
+</div>
+
+<div class="wadah">
+
+  <h1 class="judul">✨ PERTANYAAN DARI BAMA ✨</h1>
+  <p class="info-baru">🔄 Otomatis diperbarui jika ada pertanyaan baru...</p>
+
+  <!-- HALAMAN UTAMA: 2 BAGIAN TERPISAH -->
+  <div id="halamanUtama">
+    <!-- BAGIAN 1: PERTANYAAN BIASA -->
+    <h3 style="color:#a78bfa; margin:10px 0 5px;">📋 PERTANYAAN BIASA</h3>
+    <div id="daftarBiasa">
+      <p style="color:#aaa; font-size:14px;">Belum ada pertanyaan biasa.</p>
+    </div>
+
+    <hr class="baris-pemisah">
+
+    <!-- BAGIAN 2: PERTANYAAN KHUSUS -->
+    <h3 style="color:#34d399; margin:20px 0 5px;">👤 PERTANYAAN KHUSUS</h3>
+    <div id="daftarKhusus">
+      <p style="color:#aaa; font-size:14px;">Belum ada pertanyaan khusus.</p>
+    </div>
+  </div>
+
+  <!-- HALAMAN JAWAB SOAL -->
+  <div id="halamanJawab" class="sembunyi">
+    <div class="kartu">
+      <button class="btn-abu" onclick="kembaliUtama()" style="margin-bottom:15px">← Kembali</button>
+      <h2 id="judulTanya"></h2>
+      <p style="color:#aaa; font-size:14px; margin:8px 0;" id="infoTipe"></p>
+      <hr>
+      <p style="font-weight:bold; margin:12px 0 6px;" id="teksSoal"></p>
+      <div id="pilihanJawab"></div>
+      <button class="btn-hijau" onclick="kirimJawaban()" style="margin-top:20px;">✅ KIRIM JAWABAN</button>
+    </div>
+  </div>
+
+  <!-- POPUP LOGIN ADMIN -->
+  <div id="popupLogin" class="popup sembunyi">
+    <div class="kartu" style="width:100%; max-width:400px;">
+      <h2 style="text-align:center; margin-bottom:15px;">🔐 Masuk Admin</h2>
+      <input type="password" id="kataSandi" class="masukkan" placeholder="Masukkan kata sandi...">
+      <div style="display:flex; gap:8px; margin-top:12px;">
+        <button class="btn-abu" onclick="tutupPopup()">Batal</button>
+        <button class="btn-hijau" onclick="cekSandi()">MASUK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD ADMIN -->
+  <div id="halamanAdmin" class="sembunyi">
+    <div class="kartu">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h2>⚙️ DASHBOARD ADMIN</h2>
+        <button class="btn-merah" onclick="keluarAdmin()">Keluar</button>
+      </div>
+      <div class="nav">
+        <button class="aktif" id="tab1" onclick="bukaTab(1)">📩 Jawaban Masuk</button>
+        <button id="tab2" onclick="bukaTab(2)">➕ Pertanyaan Biasa</button>
+        <button id="tab3" onclick="bukaTab(3)">👤 Pertanyaan Khusus</button>
+      </div>
+      <hr>
+
+      <!-- TAB 1: JAWABAN MASUK -->
+      <div id="isiTab1">
+        <h3>📩 Semua Jawaban Masuk</h3>
+        <p style="font-size:13px; color:#aaa; margin-bottom:10px;">Jumlah: <strong id="jumlahJawab">0</strong></p>
+        <div id="daftarJawabanAdmin"></div>
+      </div>
+
+      <!-- TAB 2: TAMBAH PERTANYAAN BIASA -->
+      <div id="isiTab2" class="sembunyi">
+        <h3>➕ TAMBAH PERTANYAAN BIASA</h3>
+        <label>Judul/Mata Pelajaran:</label>
+        <input type="text" id="judulSoalBiasa" class="masukkan" placeholder="Contoh: Matematika">
+        <label>Pertanyaan:</label>
+        <textarea id="teksSoalBiasa" class="masukkan" placeholder="Tulis pertanyaan..."></textarea>
+        <label>Pilihan A:</label><input type="text" id="pilABiasa" class="masukkan" placeholder="Jawaban A">
+        <label>Pilihan B:</label><input type="text" id="pilBBiasa" class="masukkan" placeholder="Jawaban B">
+        <label>Pilihan C:</label><input type="text" id="pilCBiasa" class="masukkan" placeholder="Jawaban C">
+        <label>Pilihan D:</label><input type="text" id="pilDBiasa" class="masukkan" placeholder="Jawaban D">
+        <button class="btn-hijau" onclick="simpanBiasa()">✅ SIMPAN PERTANYAAN BIASA</button>
+      </div>
+
+      <!-- TAB 3: TAMBAH PERTANYAAN KHUSUS + LINK -->
+      <div id="isiTab3" class="sembunyi">
+        <h3>👤 TAMBAH PERTANYAAN KHUSUS & BUAT LINK</h3>
+        <label>Nama Orang yang Dituju:</label>
+        <input type="text" id="namaTarget" class="masukkan" placeholder="Contoh: Dodol">
+        <label>Judul Pertanyaan Khusus:</label>
+        <input type="text" id="judulSoalKhusus" class="masukkan" placeholder="Contoh: Pertanyaan Khusus Buat Kamu">
+        <label>Pertanyaan:</label>
+        <textarea id="teksSoalKhusus" class="masukkan" placeholder="Tulis pertanyaan khusus..."></textarea>
+        <label>Pilihan A:</label><input type="text" id="pilAKhusus" class="masukkan" placeholder="Jawaban A">
+        <label>Pilihan B:</label><input type="text" id="pilBKhusus" class="masukkan" placeholder="Jawaban B">
+        <label>Pilihan C:</label><input type="text" id="pilCKhusus" class="masukkan" placeholder="Jawaban C">
+        <label>Pilihan D:</label><input type="text" id="pilDKhusus" class="masukkan" placeholder="Jawaban D">
+        <button class="btn-ungu" onclick="simpanKhusus()">🔗 BUAT & SIMPAN PERTANYAAN KHUSUS</button>
+        <hr>
+        <h4>📋 Daftar Link Khusus:</h4>
+        <div id="daftarLinkKhusus"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// PENYIMPANAN
+const K_SANDI = "sandi_bama";
+const K_BIASA = "pertanyaan_biasa";
+const K_KHUSUS = "pertanyaan_khusus";
+const K_JAWABAN = "jawaban_masuk_bama";
+
+let SANDI = "admin123";
+let DAFTAR_BIASA = [];   // Pertanyaan Biasa
+let DAFTAR_KHUSUS = [];  // Pertanyaan Khusus + Link
+let JAWABAN_MASUK = [];
+let SOAL_SEKARANG = null;
+let JAWABAN_TERPILIH = null;
+
+// MUAT DATA & MULAI PEMBARUAN OTOMATIS
+function muatSemua() {
+  let s = localStorage.getItem(K_SANDI); if(s) SANDI = s;
+  let b = localStorage.getItem(K_BIASA); if(b) DAFTAR_BIASA = JSON.parse(b);
+  let k = localStorage.getItem(K_KHUSUS); if(k) DAFTAR_KHUSUS = JSON.parse(k);
+  let j = localStorage.getItem(K_JAWABAN); if(j) JAWABAN_MASUK = JSON.parse(j);
+  tampilkanHalamanUtama();
+  tampilkanJawabanAdmin();
+  tampilkanLinkDiAdmin();
+  cekLinkDariAlamat();
+}
+function simpanSemua() {
+  localStorage.setItem(K_BIASA, JSON.stringify(DAFTAR_BIASA));
+  localStorage.setItem(K_KHUSUS, JSON.stringify(DAFTAR_KHUSUS));
+  localStorage.setItem(K_JAWABAN, JSON.stringify(JAWABAN_MASUK));
+}
+
+// 🔄 PEMBARUAN OTOMATIS SETIAP 3 DETIK
+setInterval(() => {
+  let b = localStorage.getItem(K_BIASA);
+  let k = localStorage.getItem(K_KHUSUS);
+  let j = localStorage.getItem(K_JAWABAN);
+  if(b !== JSON.stringify(DAFTAR_BIASA) || k !== JSON.stringify(DAFTAR_KHUSUS)) {
+    muatSemua(); // Otomatis tampil yang baru
+  }
+}, 3000);
+
+// === TOMBOL ADMIN ===
+function bukaLoginAdmin(){document.getElementById("popupLogin").classList.remove("sembunyi");}
+function tutupPopup(){document.getElementById("popupLogin").classList.add("sembunyi");}
+function cekSandi(){let k=document.getElementById("kataSandi").value.trim(); if(k===SANDI){tutupPopup(); bukaAdmin()}else{alert("❌ Sandi SALAH!")}}
+function bukaAdmin(){
+  document.getElementById("halamanUtama").classList.add("sembunyi");
+  document.getElementById("halamanAdmin").classList.remove("sembunyi");
+  bukaTab(1); tampilkanJawabanAdmin(); tampilkanLinkDiAdmin();
+}
+function keluarAdmin(){
+  document.getElementById("halamanAdmin").classList.add("sembunyi");
+  document.getElementById("halamanUtama").classList.remove("sembunyi");
+}
+function bukaTab(n){
+  for(let i=1;i<=3;i++){document.getElementById("isiTab"+i).classList.add("sembunyi"); document.getElementById("tab"+i).classList.remove("aktif");}
+  document.getElementById("isiTab"+n).classList.remove("sembunyi");
+  document.getElementById("tab"+n).classList.add("aktif");
+}
+
+// === TAMPILAN HALAMAN UTAMA — 2 BAGIAN TERPISAH ===
+function tampilkanHalamanUtama(){
+  // Pertanyaan Biasa
+  let htmlBiasa = "";
+  if(DAFTAR_BIASA.length===0) htmlBiasa = "<p style='color:#aaa; font-size:14px;'>Belum ada pertanyaan biasa.</p>";
+  else DAFTAR_BIASA.forEach((soal,i)=>{
+    htmlBiasa += `<div class="kartu">
+      <h4>${soal.judul}</h4>
+      <p style="color:#ddd; font-size:14px; margin:6px 0;">${potong(soal.teks,50)}...</p>
+      <button class="btn-biru" onclick="bukaBiasa(${i})">📝 JAWAB SEKARANG</button>
+    </div>`;
+  });
+  document.getElementById("daftarBiasa").innerHTML = htmlBiasa;
+
+  // Pertanyaan Khusus
+  let htmlKhusus = "";
+  if(DAFTAR_KHUSUS.length===0) htmlKhusus = "<p style='color:#aaa; font-size:14px;'>Belum ada pertanyaan khusus.</p>";
+  else DAFTAR_KHUSUS.forEach((soal,i)=>{
+    htmlKhusus += `<div class="kartu">
+      <h4>👤 Untuk: ${soal.namaTujuan}</h4>
+      <p style="color:#ddd; font-size:14px; margin:6px 0;">${potong(soal.teks,50)}...</p>
+      <button class="btn-hijau" onclick="bukaKhusus(${i})">📝 JAWAB KHUSUS</button>
+    </div>`;
+  });
+  document.getElementById("daftarKhusus").innerHTML = htmlKhusus;
+}
+
+// === SIMPAN PERTANYAAN BIASA ===
+function simpanBiasa(){
+  let judul = document.getElementById("judulSoalBiasa").value.trim();
+  let teks = document.getElementById("teksSoalBiasa").value.trim();
+  let A = document.getElementById("pilABiasa").value.trim();
+  let B = document.getElementById("pilBBiasa").value.trim();
+  let C = document.getElementById("pilCBiasa").value.trim();
+  let D = document.getElementById("pilDBiasa").value.trim();
+  if(!judul||!teks||!A||!B||!C||!D){alert("⚠️ Lengkapi SEMUA isian!"); return;}
+
+  DAFTAR_BIASA.push({
+    judul, teks,
+    pilihan: [{h:'A',t:A},{h:'B',t:B},{h:'C',t:C},{h:'D',t:D}]
+  });
+  simpanSemua(); tampilkanHalamanUtama();
+
+  // Kosongkan form
+  document.getElementById("judulSoalBiasa").value="";
+  document.getElementById("teksSoalBiasa").value="";
+  document.getElementById("pilABiasa").value="";
+  document.getElementById("pilBBiasa").value="";
+  document.getElementById("pilCBiasa").value="";
+  document.getElementById("pilDBiasa").value="";
+
+  alert("✅ PERTANYAAN BIASA TERSIMPAN!\n🔄 Otomatis muncul di HP semua orang!");
+}
+
+// === SIMPAN PERTANYAAN KHUSUS + BUAT LINK ===
+function simpanKhusus(){
+  let nama = document.getElementById("namaTarget").value.trim();
+  let judul = document.getElementById("judulSoalKhusus").value.trim();
+  let teks = document.getElementById("teksSoalKhusus").value.trim();
+  let A = document.getElementById("pilAKhusus").value.trim();
+  let B = document.getElementById("pilBKhusus").value.trim();
+  let C = document.getElementById("pilCKhusus").value.trim();
+  let D = document.getElementById("pilDKhusus").value.trim();
+  if(!nama||!judul||!teks||!A||!B||!C||!D){alert("⚠️ Lengkapi SEMUA isian termasuk nama orangnya!"); return;}
+
+  let namaPendek = nama.toLowerCase().replace(/[^a-z0-9]/g,"");
+  DAFTAR_KHUSUS.push({
+    namaPendek, namaTujuan:nama, judul, teks,
+    pilihan: [{h:'A',t:A},{h:'B',t:B},{h:'C',t:C},{h:'D',t:D}]
+  });
+  simpanSemua(); tampilkanHalamanUtama(); tampilkanLinkDiAdmin();
+
+  // Kosongkan form
+  document.getElementById("namaTarget").value="";
+  document.getElementById("judulSoalKhusus").value="";
+  document.getElementById("teksSoalKhusus").value="";
+  document.getElementById("pilAKhusus").value="";
+  document.getElementById("pilBKhusus").value="";
+  document.getElementById("pilCKhusus").value="";
+  document.getElementById("pilDKhusus").value="";
+
+  let link = `${window.location.origin}${window.location.pathname}?untuk=${namaPendek}`;
+  alert(`✅ PERTANYAAN KHUSUS DIBUAT!\n🔗 Link: ${link}\n🔄 Otomatis muncul di HP orang yang dituju!`);
+}
+
+// === TAMPILKAN DAFTAR LINK DI ADMIN ===
+function tampilkanLinkDiAdmin(){
+  let html = ""; const url = window.location.origin + window.location.pathname;
+  DAFTAR_KHUSUS.forEach(s=>{
+    html += `<div class="link-khusus"><strong>Untuk ${s.namaTujuan}:</strong><br>${url}?untuk=${s.namaPendek}</div>`;
+  });
+  document.getElementById("daftarLinkKhusus").innerHTML = html || "<p style='color:#aaa'>Belum ada link.</p>";
+}
+
+// === BUKA SOAL BIASA ===
+function bukaBiasa(idx){
+  SOAL_SEKARANG = {tipe:'biasa', data:DAFTAR_BIASA[idx], idx};
+  tampilkanSoal(DAFTAR_BIASA[idx], "📋 PERTANYAAN BIASA");
+}
+
+// === BUKA SOAL KHUSUS ===
+function bukaKhusus(idx){
+  SOAL_SEKARANG = {tipe:'khusus', data:DAFTAR_KHUSUS[idx], idx};
+  tampilkanSoal(DAFTAR_KHUSUS[idx], `👤 KHUSUS UNTUK: ${DAFTAR_KHUSUS[idx].namaTujuan}`);
+}
+
+// === CEK JIKA DIBUKA DARI LINK KHUSUS ===
+function cekLinkDariAlamat(){
+  let p = new URLSearchParams(window.location.search);
+  let namaPendek = p.get('untuk');
+  if(namaPendek){
+    let ketemu = DAFTAR_KHUSUS.find(s=>s.namaPendek === namaPendek.toLowerCase());
+    if(ketemu){
+      SOAL_SEKARANG = {tipe:'khusus', data:ketemu, idx:0};
+      tampilkanSoal(ketemu, `🔗 DARI LINK KHUSUS — Untuk: ${ketemu.namaTujuan}`);
+    }
+  }
+}
+
+// === TAMPILKAN SOAL & PILIHAN A B C D ===
+function tampilkanSoal(soal, info){
+  JAWABAN_TERPILIH = null;
+  document.getElementById("halamanUtama").classList.add("sembunyi");
+  document.getElementById("halamanJawab").classList.remove("sembunyi");
+  document.getElementById("judulTanya").textContent = soal.judul;
+  document.getElementById("infoTipe").textContent = info;
+  document.getElementById("teksSoal").textContent = soal.teks;
+
+  let htmlPilihan = "";
+  soal.pilihan.forEach(p=>{
+    htmlPilihan += `<button class="pilihan-jawaban" onclick="pilihJawaban(this, '${p.h}')">${p.h}. ${p.t}</button>`;
+  });
+  document.getElementById("pilihanJawab").innerHTML = htmlPilihan;
+}
+function pilihJawaban(btn, huruf){
+  document.querySelectorAll(".pilihan-jawaban").forEach(x=>x.classList.remove("terpilih"));
+  btn.classList.add("terpilih");
+  JAWABAN_TERPILIH = {huruf, teks:btn.textContent.replace(`${huruf}. `,"")};
+}
+
+// === KIRIM JAWABAN MASUK KE ADMIN ===
+function kirimJawaban(){
+  if(!JAWABAN_TERPILIH){alert("⚠️ Pilih jawaban dulu!"); return;}
+
+  JAWABAN_MASUK.unshift({
+    waktu: new Date().toLocaleString('id-ID'),
+    judul: SOAL_SEKARANG.data.judul,
+    tipe: SOAL_SEKARANG.tipe==='biasa' ? "Pertanyaan Biasa" : `Pertanyaan Khusus: ${SOAL_SEKARANG.data.namaTujuan}`,
+    pertanyaan: SOAL_SEKARANG.data.teks,
+    jawaban: `${JAWABAN_TERPILIH.huruf}. ${JAWABAN_TERPILIH.teks}`
+  });
+  simpanSemua(); tampilkanJawabanAdmin();
+  alert(`✅ JAWABAN TERKIRIM!\nJawaban: ${JAWABAN_TERPILIH.huruf}`);
+  kembaliUtama();
+}
+
+// === TAMPILKAN JAWABAN DI ADMIN ===
+function tampilkanJawabanAdmin(){
+  document.getElementById("jumlahJawab").textContent = JAWABAN_MASUK.length;
+  let html = "";
+  if(JAWABAN_MASUK.length===0) html = "<p style='color:#aaa'>Belum ada jawaban masuk.</p>";
+  else JAWABAN_MASUK.forEach(j=>{
+    html += `<div class="riwayat-jawaban">
+      <strong>📚 ${j.judul}</strong> — <small>${j.tipe}</small><br>
+      <small style="color:#888">🕐 ${j.waktu}</small><br>
+      <strong>❓ Soal:</strong> ${j.pertanyaan}<br>
+      <strong>✅ JAWABAN: ${j.jawaban}</strong>
+    </div>`;
+  });
+  document.getElementById("daftarJawabanAdmin").innerHTML = html;
+}
+
+function kembaliUtama(){
+  document.getElementById("halamanUtama").classList.remove("sembunyi");
+  document.getElementById("halamanJawab").classList.add("sembunyi");
+  SOAL_SEKARANG = null; JAWABAN_TERPILIH = null;
+}
+function potong(t, p){return t.length>p ? t.substring(0,p) : t;}
+
+// JALANKAN
+muatSemua();
+</script>
+
+</div>
+</body>
+        </html>
+        
