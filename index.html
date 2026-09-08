@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PERTANYAAN DARI BAMA</title>
+<style>
+* {margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif;}
+body {background:linear-gradient(135deg,#1e1b4b,#312e81); color:#fff; min-height:100vh; padding:15px;}
+.wadah {max-width:600px; margin:0 auto;}
+
+/* TOMBOL ADMIN — MERAH BESAR DI POJOK */
+.tombol-admin-pojok {
+  position:fixed; top:10px; right:10px; z-index:9999999;
+}
+.tombol-besar {
+  padding:15px 25px; font-size:18px; font-weight:bold;
+  background:linear-gradient(135deg,#ef4444,#b91c1c); color:#fff;
+  border:none; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.4);
+  cursor:pointer;
+}
+.tombol-besar:active {transform:scale(0.95);}
+
+.judul {text-align:center; margin-bottom:20px; margin-top:70px;}
+.sembunyi {display:none !important;}
+.kartu {background:rgba(255,255,255,0.1); padding:20px; border-radius:15px; border:1px solid rgba(255,255,255,0.15); margin-bottom:15px;}
+.masukkan {width:100%; padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.3); background:rgba(0,0,0,0.25); color:#fff; margin:8px 0; font-size:15px;}
+label {display:block; margin-top:10px; margin-bottom:4px; font-size:14px; color:#ddd;}
+button {padding:10px 15px; border-radius:8px; border:none; cursor:pointer; font-size:14px; font-weight:bold;}
+.btn-hijau {background:#10b981; color:#fff; width:100%; margin-top:10px;}
+.btn-biru {background:#3b82f6; color:#fff; width:100%; margin-top:10px;}
+.btn-merah {background:#ef4444; color:#fff;}
+.btn-abu {background:#4b5563; color:#fff;}
+
+/* PILIHAN JAWABAN A B C D */
+.pilihan-jawaban {
+  display:block; width:100%; text-align:left; padding:14px; margin:8px 0;
+  border-radius:10px; background:rgba(255,255,255,0.08); border:2px solid transparent;
+  color:#fff; cursor:pointer; font-size:15px; transition:0.2s;
+}
+.pilihan-jawaban:hover {background:rgba(255,255,255,0.12);}
+.pilihan-jawaban.terpilih {background:rgba(16,185,129,0.25); border-color:#10b981; color:#34d399; font-weight:bold;}
+
+.popup {position:fixed; inset:0; background:rgba(0,0,0,0.9); display:flex; align-items:center; justify-content:center; padding:15px; z-index:999999;}
+.nav {display:flex; gap:6px; flex-wrap:wrap; margin-bottom:15px;}
+.nav button {padding:8px 10px; font-size:13px;}
+.nav .aktif {background:#8b5cf6;}
+.link-khusus {background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.4); padding:10px; border-radius:8px; margin-top:8px; word-break:break-all; font-size:13px; color:#93c5fd;}
+.riwayat-jawaban {background:rgba(0,0,0,0.25); padding:12px; border-radius:8px; margin:8px 0; border-left:3px solid #10b981;}
+hr {border:0; border-top:1px solid rgba(255,255,255,0.2); margin:12px 0;}
+.pemutar-musik {background:rgba(236,72,153,0.12); border:2px solid rgba(236,72,153,0.5); padding:15px; border-radius:15px; margin-bottom:20px;}
+audio {width:100%; margin-top:8px; border-radius:8px;}
+</style>
+</head>
+<body>
+
+<!-- TOMBOL ADMIN MERAH DI POJOK -->
+<div class="tombol-admin-pojok">
+  <button class="tombol-besar" onclick="bukaLoginAdmin()">🔐 ADMIN</button>
+</div>
+
+<div class="wadah">
+
+  <h1 class="judul">✨ PERTANYAAN DARI BAMA ✨</h1>
+
+  <!-- PEMUTAR MUSIK -->
+  <div class="pemutar-musik" id="kotakMusik">
+    <h4 style="color:#ec4899; margin-bottom:8px;">🎵 Musik Latar</h4>
+    <div id="infoMusik"><p style="color:#ddd; font-size:14px">Belum ada musik.</p></div>
+    <audio id="pemutarAudio" controls loop style="display:none;">
+  </div>
+
+  <!-- HALAMAN UTAMA -->
+  <div id="halamanUtama">
+    <h3 style="color:#a78bfa; margin:10px 0 5px;">📋 Pertanyaan Umum</h3>
+    <div id="daftarBiasa"></div>
+
+    <h3 style="color:#34d399; margin:25px 0 5px;">👤 Pertanyaan Khusus</h3>
+    <div id="daftarTarget"></div>
+  </div>
+
+  <!-- HALAMAN JAWAB PERTANYAAN -->
+  <div id="halamanJawab" class="sembunyi">
+    <div class="kartu">
+      <button class="btn-abu" onclick="kembaliUtama()" style="margin-bottom:15px">← Kembali</button>
+      <h2 id="judulTanya"></h2>
+      <p style="color:#aaa; font-size:14px; margin:8px 0;" id="infoLink"></p>
+      <hr>
+      <p style="font-weight:bold; margin:12px 0 6px;" id="teksSoal"></p>
+      
+      <!-- PILIHAN A B C D OTOMATIS -->
+      <div id="pilihanJawab"></div>
+      
+      <button class="btn-hijau" onclick="kirimJawaban()" style="margin-top:20px;">✅ KIRIM JAWABAN</button>
+    </div>
+  </div>
+
+  <!-- POPUP LOGIN ADMIN -->
+  <div id="popupLogin" class="popup sembunyi">
+    <div class="kartu" style="width:100%; max-width:400px;">
+      <h2 style="text-align:center; margin-bottom:15px;">🔐 Masuk Admin</h2>
+      <input type="password" id="kataSandi" class="masukkan" placeholder="Masukkan kata sandi...">
+      <div style="display:flex; gap:8px; margin-top:12px;">
+        <button class="btn-abu" onclick="tutupPopup()">Batal</button>
+        <button class="btn-hijau" onclick="cekSandi()">MASUK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD ADMIN -->
+  <div id="halamanAdmin" class="sembunyi">
+    <div class="kartu">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h2>⚙️ DASHBOARD ADMIN</h2>
+        <button class="btn-merah" onclick="keluarAdmin()">Keluar</button>
+      </div>
+      <div class="nav">
+        <button class="aktif" id="tab1" onclick="bukaTab(1)">📩 Jawaban Masuk</button>
+        <button id="tab2" onclick="bukaTab(2)">➕ Pertanyaan</button>
+        <button id="tab3" onclick="bukaTab(3)">👤 Target & Link</button>
+        <button id="tab4" onclick="bukaTab(4)">🎵 Musik</button>
+      </div>
+      <hr>
+
+      <!-- TAB 1: JAWABAN MASUK -->
+      <div id="isiTab1">
+        <h3>📩 Semua Jawaban Masuk</h3>
+        <p style="font-size:13px; color:#aaa; margin-bottom:10px;">Jumlah Jawaban: <strong id="jumlahJawab">0</strong></p>
+        <div id="daftarJawabanAdmin"></div>
+      </div>
+
+      <!-- TAB 2: TAMBAH PERTANYAAN -->
+      <div id="isiTab2" class="sembunyi">
+        <h3>➕ Tambah Pertanyaan (A/B/C/D)</h3>
+        <label>Judul/Mata Pelajaran:</label>
+        <input type="text" id="judulSoal" class="masukkan" placeholder="Contoh: Matematika">
+        <label>Pertanyaan:</label>
+        <textarea id="teksSoalInput" class="masukkan" placeholder="Tulis pertanyaan..."></textarea>
+        <label>Pilihan A:</label><input type="text" id="pilA" class="masukkan" placeholder="Jawaban A">
+        <label>Pilihan B:</label><input type="text" id="pilB" class="masukkan" placeholder="Jawaban B">
+        <label>Pilihan C:</label><input type="text" id="pilC" class="masukkan" placeholder="Jawaban C">
+        <label>Pilihan D:</label><input type="text" id="pilD" class="masukkan" placeholder="Jawaban D">
+        <button class="btn-hijau" onclick="simpanPertanyaan()">✅ Simpan Pertanyaan</button>
+      </div>
+
+      <!-- TAB 3: BUAT TARGET & LINK -->
+      <div id="isiTab3" class="sembunyi">
+        <h3>👤 Buat Pertanyaan Khusus & Link</h3>
+        <label>Nama Orang yang Dituju:</label>
+        <input type="text" id="namaTargetBaru" class="masukkan" placeholder="Contoh: Dodol">
+        <button class="btn-biru" onclick="buatTargetLink()">🔗 Buat Link Khusus</button>
+        <hr>
+        <h4>📋 Daftar Link:</h4>
+        <div id="daftarLinkKhusus"></div>
+      </div>
+
+      <!-- TAB 4: MUSIK -->
+      <div id="isiTab4" class="sembunyi">
+        <h3>🎵 Upload Musik</h3>
+        <label>Nama Lagu:</label>
+        <input type="text" id="namaLagu" class="masukkan" placeholder="Contoh: Lagu Dodol">
+        <label>Pilih File Musik:</label>
+        <input type="file" id="fileMusik" class="masukkan" accept="audio/*">
+        <button class="btn-hijau" onclick="uploadMusik()">✅ Pasang Musik</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// KUNCI PENYIMPANAN
+const K_SANDI = "sandi_bama";
+const K_SOAL = "soal_bama";
+const K_TARGET = "target_bama";
+const K_JAWABAN = "jawaban_masuk_bama";
+const K_MUSIK = "musik_bama";
+
+let SANDI = "admin123";
+let DAFTAR_SOAL = [];
+let DAFTAR_TARGET = [];
+let JAWABAN_MASUK = [];
+let MUSIK_DATA = {nama:'', url:''};
+let SOAL_SEKARANG = null;
+let JAWABAN_TERPILIH = null;
+
+// MUAT DATA SAAT DIBUKA
+function muatSemuaData() {
+  let s = localStorage.getItem(K_SANDI); if(s) SANDI = s;
+  let soal = localStorage.getItem(K_SOAL); if(soal) DAFTAR_SOAL = JSON.parse(soal);
+  let tgt = localStorage.getItem(K_TARGET); if(tgt) DAFTAR_TARGET = JSON.parse(tgt);
+  let jwb = localStorage.getItem(K_JAWABAN); if(jwb) JAWABAN_MASUK = JSON.parse(jwb);
+  let msk = localStorage.getItem(K_MUSIK); if(msk){MUSIK_DATA=JSON.parse(msk); if(MUSIK_DATA.url) tampilkanMusik();}
+  tampilkanHalamanUtama();
+  tampilkanJawabanAdmin();
+  cekLinkDariAlamat();
+}
+function simpanSemua() {
+  localStorage.setItem(K_SOAL, JSON.stringify(DAFTAR_SOAL));
+  localStorage.setItem(K_TARGET, JSON.stringify(DAFTAR_TARGET));
+  localStorage.setItem(K_JAWABAN, JSON.stringify(JAWABAN_MASUK));
+}
+
+// === FUNGSI TOMBOL ADMIN ===
+function bukaLoginAdmin(){document.getElementById("popupLogin").classList.remove("sembunyi"); document.getElementById("kataSandi").value="";}
+function tutupPopup(){document.getElementById("popupLogin").classList.add("sembunyi");}
+function cekSandi(){let k=document.getElementById("kataSandi").value.trim(); if(k===SANDI){tutupPopup(); bukaAdmin()}else{alert("❌ Sandi SALAH!")}}
+function bukaAdmin(){
+  document.getElementById("halamanUtama").classList.add("sembunyi");
+  document.getElementById("halamanAdmin").classList.remove("sembunyi");
+  bukaTab(1); tampilkanJawabanAdmin(); tampilkanLinkDiAdmin();
+}
+function keluarAdmin(){
+  document.getElementById("halamanAdmin").classList.add("sembunyi");
+  document.getElementById("halamanUtama").classList.remove("sembunyi");
+}
+function bukaTab(n){
+  for(let i=1;i<=4;i++){document.getElementById("isiTab"+i).classList.add("sembunyi"); document.getElementById("tab"+i).classList.remove("aktif");}
+  document.getElementById("isiTab"+n).classList.remove("sembunyi");
+  document.getElementById("tab"+n).classList.add("aktif");
+}
+
+// === TAMPILAN HALAMAN UTAMA ===
+function tampilkanHalamanUtama(){
+  let htmlSoal = "";
+  DAFTAR_SOAL.forEach((soal, i)=>{
+    htmlSoal += `<div class="kartu">
+      <h4>${soal.judul}</h4>
+      <p style="color:#ddd; font-size:14px; margin:6px 0;">${potongTeks(soal.teks, 60)}...</p>
+      <button class="btn-biru" onclick="bukaSoal(${i})">📝 Jawab Soal</button>
+    </div>`;
+  });
+  document.getElementById("daftarBiasa").innerHTML = htmlSoal;
+
+  let htmlTarget = "";
+  DAFTAR_TARGET.forEach((t, i)=>{
+    htmlTarget += `<div class="kartu">
+      <h4>Untuk: ${t.nama}</h4>
+      <button class="btn-hijau" onclick="bukaTargetSoal(${i})">📝 Jawab Khusus</button>
+    </div>`;
+  });
+  document.getElementById("daftarTarget").innerHTML = htmlTarget;
+}
+
+// === TAMBAH PERTANYAAN DENGAN PILIHAN A B C D ===
+function simpanPertanyaan(){
+  let judul = document.getElementById("judulSoal").value.trim();
+  let teks = document.getElementById("teksSoalInput").value.trim();
+  let A = document.getElementById("pilA").value.trim();
+  let B = document.getElementById("pilB").value.trim();
+  let C = document.getElementById("pilC").value.trim();
+  let D = document.getElementById("pilD").value.trim();
+  
+  if(!judul||!teks||!A||!B||!C||!D){alert("⚠️ Lengkapi SEMUA isian termasuk pilihan A B C D!"); return;}
+  
+  DAFTAR_SOAL.push({
+    judul: judul,
+    teks: teks,
+    pilihan: [
+      {huruf:'A', teks:A},
+      {huruf:'B', teks:B},
+      {huruf:'C', teks:C},
+      {huruf:'D', teks:D}
+    ]
+  });
+  
+  simpanSemua(); tampilkanHalamanUtama();
+  
+  // KOSONGKAN FORM
+  document.getElementById("judulSoal").value = "";
+  document.getElementById("teksSoalInput").value = "";
+  document.getElementById("pilA").value = "";
+  document.getElementById("pilB").value = "";
+  document.getElementById("pilC").value = "";
+  document.getElementById("pilD").value = "";
+  
+  alert("✅ Pertanyaan TERSIMPAN dengan pilihan A/B/C/D!");
+}
+
+// === BUKA SOAL UNTUK DIJAWAB ===
+function bukaSoal(idx){
+  SOAL_SEKARANG = {tipe:'umum', data:DAFTAR_SOAL[idx], idx:idx};
+  tampilkanSoal(DAFTAR_SOAL[idx], "Pertanyaan Umum");
+}
+function bukaTargetSoal(idx){
+  SOAL_SEKARANG = {tipe:'khusus', target:DAFTAR_TARGET[idx], idx:idx};
+  tampilkanSoal(DAFTAR_SOAL[0] || DAFTAR_SOAL[idx] || DAFTAR_SOAL[0], `Untuk: ${DAFTAR_TARGET[idx].nama}`);
+}
+function tampilkanSoal(soal, info){
+  JAWABAN_TERPILIH = null;
+  document.getElementById("halamanUtama").classList.add("sembunyi");
+  document.getElementById("halamanJawab").classList.remove("sembunyi");
+  document.getElementById("judulTanya").textContent = soal.judul;
+  document.getElementById("infoLink").textContent = info;
+  document.getElementById("teksSoal").textContent = soal.teks;
+  
+  // TAMPILKAN PILIHAN A B C D OTOMATIS
+  let htmlPilihan = "";
+  soal.pilihan.forEach(p=>{
+    htmlPilihan += `<button class="pilihan-jawaban" onclick="pilihIni(this, '${p.huruf}', '${p.teks.replace(/'/g,"\\'")}')">${p.huruf}. ${p.teks}</button>`;
+  });
+  document.getElementById("pilihanJawab").innerHTML = htmlPilihan;
+}
+function pilihIni(btn, huruf, teks){
+  // HAPUS TANDA PILIHAN LAIN
+  document.querySelectorAll(".pilihan-jawaban").forEach(x=>x.classList.remove("terpilih"));
+  // TANDAI YANG DIPILIH
+  btn.classList.add("terpilih");
+  JAWABAN_TERPILIH = {huruf:huruf, teks:teks};
+}
+
+// === KIRIM JAWABAN MASUK KE DASHBOARD ADMIN ===
+function kirimJawaban(){
+  if(!JAWABAN_TERPILIH){alert("⚠️ Pilih jawaban dulu (A/B/C/D)!"); return;}
+  
+  let namaTujuan = SOAL_SEKARANG.tipe==='khusus' ? SOAL_SEKARANG.target.nama : "Pertanyaan Umum";
+  let linkAsal = SOAL_SEKARANG.tipe==='khusus' ? `${window.location.origin}?untuk=${SOAL_SEKARANG.target.pendek}` : "Halaman Utama";
+  
+  // SIMPAN JAWABAN MASUK
+  JAWABAN_MASUK.unshift({
+    waktu: new Date().toLocaleString('id-ID'),
+    judulSoal: SOAL_SEKARANG.data.judul,
+    pertanyaan: SOAL_SEKARANG.data.teks,
+    jawabanHuruf: JAWABAN_TERPILIH.huruf,
+    jawabanTeks: JAWABAN_TERPILIH.teks,
+    untukSiapa: namaTujuan,
+    linkAsal: linkAsal
+  });
+  
+  simpanSemua(); tampilkanJawabanAdmin();
+  
+  alert(`✅ JAWABAN TERKIRIM!\nJawaban Anda: ${JAWABAN_TERPILIH.huruf}. ${JAWABAN_TERPILIH.teks}`);
+  kembaliUtama();
+}
+
+// === TAMPILKAN JAWABAN DI ADMIN ===
+function tampilkanJawabanAdmin(){
+  document.getElementById("jumlahJawab").textContent = JAWABAN_MASUK.length;
+  let html = "";
+  if(JAWABAN_MASUK.length===0){
+    html = "<p style='color:#aaa'>Belum ada jawaban masuk.</p>";
+  } else {
+    JAWABAN_MASUK.forEach(j=>{
+      html += `<div class="riwayat-jawaban">
+        <strong>📚 ${j.judulSoal}</strong><br>
+        <small style="color:#888">🕐 ${j.waktu} | 👤 Untuk: ${j.untukSiapa}</small><br>
+        <small style="color:#666">🔗 Dari: ${j.linkAsal}</small><br>
+        <hr style="margin:6px 0; border:none; border-top:1px dashed #444;">
+        <strong>❓ Soal:</strong> ${j.pertanyaan}<br>
+        <strong>✅ JAWABAN: ${j.jawabanHuruf}. ${j.jawabanTeks}</strong>
+      </div>`;
+    });
+  }
+  document.getElementById("daftarJawabanAdmin").innerHTML = html;
+}
+
+// === BUAT TARGET & LINK KHUSUS ===
+function buatTargetLink(){
+  let nama = document.getElementById("namaTargetBaru").value.trim();
+  if(!nama){alert("⚠️ Isi nama orangnya! Contoh: Dodol"); return;}
+  let namaPendek = nama.toLowerCase().replace(/[^a-z0-9]/g,"");
+  DAFTAR_TARGET.push({nama:nama, pendek:namaPendek});
+  simpanSemua(); tampilkanHalamanUtama(); tampilkanLinkDiAdmin();
+  document.getElementById("namaTargetBaru").value = "";
+  const link = `${window.location.origin}${window.location.pathname}?untuk=${namaPendek}`;
+  alert(`✅ LINK BERHASIL DIBUAT!\nBagikan link ini:\n${link}`);
+}
+function tampilkanLinkDiAdmin(){
+  let html = ""; const url = window.location.origin + window.location.pathname;
+  DAFTAR_TARGET.forEach(t=>{
+    html += `<div class="link-khusus"><strong>${t.nama}:</strong><br>${url}?untuk=${t.pendek}</div>`;
+  });
+  document.getElementById("daftarLinkKhusus").innerHTML = html || "<p style='color:#aaa'>Belum ada link.</p>";
+}
+
+// === CEK JIKA DIBUKA DARI LINK KHUSUS ===
+function cekLinkDariAlamat(){
+  let param = new URLSearchParams(window.location.search);
+  let namaPendek = param.get('untuk');
+  if(namaPendek){
+    let ketemu = DAFTAR_TARGET.find(t=>t.pendek === namaPendek.toLowerCase());
+    if(ketemu && DAFTAR_SOAL.length>0){
+      SOAL_SEKARANG = {tipe:'khusus', target:ketemu, idx:0};
+      tampilkanSoal(DAFTAR_SOAL[0], `🔗 Dari Link Khusus — Untuk: ${ketemu.nama}`);
+    }
+  }
+}
+
+// === MUSIK ===
+function tampilkanMusik(){
+  document.getElementById("infoMusik").innerHTML = `<p>🎶 ${MUSIK_DATA.nama}</p>`;
+  let a = document.getElementById("pemutarAudio"); a.style.display = "block"; a.src = MUSIK_DATA.url;
+}
+function uploadMusik(){
+  let n = document.getElementById("namaLagu").value.trim();
+  let f = document.getElementById("fileMusik").files[0];
+  if(!n||!f){alert("Lengkapi nama dan file musik!"); return;}
+  let r = new FileReader(); r.onload = e=>{
+    MUSIK_DATA = {nama:n, url:e.target.result};
+    localStorage.setItem(K_MUSIK, JSON.stringify(MUSIK_DATA));
+    tampilkanMusik(); alert("✅ Musik terpasang!");
+  }; r.readAsDataURL(f);
+}
+
+function kembaliUtama(){
+  document.getElementById("halamanUtama").classList.remove("sembunyi");
+  document.getElementById("halamanJawab").classList.add("sembunyi");
+  SOAL_SEKARANG = null; JAWABAN_TERPILIH = null;
+}
+function potongTeks(t, p){return t.length>p ? t.substring(0,p) : t;}
+
+// JALANKAN SAAT DIBUKA
+muatSemuaData();
+</script>
+
+</div>
+</body>
+        </html>
+        
