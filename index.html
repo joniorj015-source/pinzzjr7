@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PINZZJR7 — Toko Digital</title>
+<style>
+:root{
+ --bg:#070b14;--bg2:#0c1220;--card:rgba(17,25,40,.82);--text:#eef6ff;
+ --muted:#91a0b8;--primary:#00d9ff;--primary2:#7c4dff;--danger:#ff5277;
+ --ok:#2ee6a6;--border:rgba(132,165,205,.18);--glow:#00d9ff55
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+ margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+ color:var(--text);background:
+ radial-gradient(circle at 15% 10%,#16305c 0,transparent 28%),
+ radial-gradient(circle at 85% 15%,#3a165d 0,transparent 25%),
+ linear-gradient(160deg,var(--bg),var(--bg2) 55%,#080d18);
+ min-height:100vh
+}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(#ffffff05 1px,transparent 1px),linear-gradient(90deg,#ffffff05 1px,transparent 1px);background-size:40px 40px}
+header{
+ position:sticky;top:0;z-index:50;padding:13px 18px;
+ background:rgba(7,11,20,.82);backdrop-filter:blur(18px);
+ border-bottom:1px solid var(--border)
+}
+nav{max-width:1180px;margin:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+nav h2{margin-right:auto;letter-spacing:1px;text-shadow:0 0 18px var(--glow)}
+nav h2:before{content:"✦ ";color:var(--primary)}
+button,.btn{
+ border:1px solid #ffffff12;border-radius:12px;padding:10px 14px;cursor:pointer;
+ font-weight:800;background:linear-gradient(135deg,var(--primary),#008cff);
+ color:#03101c;box-shadow:0 0 18px #00d9ff20;transition:.2s
+}
+button:hover,.btn:hover{transform:translateY(-2px);box-shadow:0 0 24px #00d9ff55}
+button.secondary{background:#ffffff0b;color:var(--text);border-color:var(--border)}
+button.danger{background:linear-gradient(135deg,#ff5277,#c82f5b);color:white}
+button.ok{background:linear-gradient(135deg,#2ee6a6,#00b981);color:#04140f}
+main{max-width:1180px;margin:28px auto;padding:0 16px;position:relative;z-index:1}
+.hero{
+ min-height:270px;display:flex;flex-direction:column;justify-content:center;
+ padding:45px 30px!important;border:1px solid var(--border)!important;border-radius:26px!important;
+ background:linear-gradient(135deg,#102344aa,#22133aaa)!important;
+ box-shadow:inset 0 1px #ffffff0b,0 25px 70px #0005!important
+}
+.hero h1{font-size:clamp(38px,7vw,72px);margin:0;background:linear-gradient(90deg,#fff,var(--primary),#b48cff);-webkit-background-clip:text;color:transparent}
+.hero p{font-size:18px;max-width:650px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.card{
+ background:var(--card);border:1px solid var(--border);border-radius:20px;padding:19px;
+ box-shadow:0 18px 45px #0004;backdrop-filter:blur(16px)
+}
+.product{position:relative;overflow:hidden}
+.product:after{content:"";position:absolute;width:110px;height:110px;border-radius:50%;right:-50px;top:-50px;background:var(--primary);filter:blur(40px);opacity:.13}
+.product img,.qris{width:100%;height:190px;object-fit:cover;border-radius:15px;background:#0b1321}
+.qris{object-fit:contain;padding:10px}
+.price{font-size:23px;font-weight:900;color:var(--primary)}
+input,textarea,select{
+ width:100%;padding:12px;border:1px solid var(--border);border-radius:12px;
+ margin:6px 0 13px;background:#09111e;color:var(--text);outline:none
+}
+input:focus,textarea:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px #00d9ff18}
+label{font-weight:800;font-size:14px;color:#dceaff}
+.hidden{display:none!important}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#17253a;color:#aeeeff;font-size:12px;font-weight:800;border:1px solid #00d9ff22}
+.stat{font-size:38px;font-weight:950;color:var(--primary)}
+.muted{color:var(--muted)}
+.order{border-left:4px solid var(--primary)}
+.preview{max-width:200px;max-height:200px;border-radius:12px;display:block;margin:8px 0}
+.notice{padding:13px;border-radius:12px;background:#10213a;color:#bcecff;margin:10px 0;border:1px solid #00d9ff18}
+.success{background:#092c25;color:#a8ffe0;border-color:#2ee6a633}
+.error{background:#351522;color:#ffc0ce;border-color:#ff527733}
+a{color:var(--primary)}
+#musicBar{
+ position:fixed;bottom:18px;right:18px;background:rgba(8,14,25,.9);color:white;
+ border:1px solid var(--border);border-radius:15px;padding:9px;z-index:60;backdrop-filter:blur(15px)
+}
+footer{padding:45px;text-align:center;color:#68758a}
+</style>
+</head>
+<body>
+<header>
+<nav>
+<h2 id="brand">PINZZJR7</h2>
+<button onclick="showPage('home')">Toko</button>
+<button onclick="showPage('orders')">Pesanan Saya</button>
+<button onclick="showPage('testimonials')">Testimoni</button>
+<button onclick="showPage('adminLogin')" class="secondary">Admin</button>
+<a id="waTop" class="btn" target="_blank" rel="noopener">WhatsApp</a>
+</nav>
+</header>
+
+<main>
+<section id="home" class="page">
+<div class="hero"><h1 id="siteTitle">PINZZJR7</h1><p id="siteDesc" class="muted">Toko digital terpercaya.</p></div>
+<div id="productGrid" class="grid"></div>
+</section>
+
+<section id="checkout" class="page hidden">
+<div class="card"><span class="badge">SECURE CHECKOUT</span><h2>🛍️ Selesaikan Pesanan</h2><div id="checkoutProduct"></div>
+<div class="notice">📝 <b>Data pembeli wajib diisi.</b><br>
+Nama, nomor WhatsApp, dan Gmail digunakan untuk menghubungi pembeli serta mengirim link produk setelah pesanan disetujui admin.</div>
+<label>Nama Lengkap Pembeli *</label><input id="buyerName" autocomplete="name" required>
+<label>Nomor WhatsApp Pembeli *</label><input id="buyerWa" inputmode="tel" autocomplete="tel" required>
+<label>Alamat Gmail / Email Pembeli *</label><input id="buyerEmail" type="email" autocomplete="email" required>
+<label>Metode Pembayaran</label><select id="payment" onchange="renderPayment()"><option value="">Pilih metode</option><option>DANA</option><option>QRIS</option></select>
+<div id="paymentInfo"></div>
+<label>Upload Bukti Transfer</label><input id="proof" type="file" accept="image/*" required>
+<img id="proofPreview" class="preview hidden">
+<button onclick="submitOrder()">Kirim Pesanan</button> <button class="secondary" onclick="showPage('home')">Batal</button>
+<div id="checkoutMsg"></div></div>
+</section>
+
+<section id="orders" class="page hidden">
+<div class="card">
+<h2>🛒 Pesanan Saya</h2>
+<p class="muted">Pesanan dari perangkat ini tampil otomatis. Tidak perlu mencari atau memasukkan email.</p>
+<div id="myOrders"></div>
+</div>
+</section>
+<section id="publicProducts" class="section">
+<div class="container">
+<h2>Produk</h2>
+<p class="muted">Pilih produk yang ingin kamu beli.</p>
+<div id="publicProductsGrid" class="grid"></div>
+</div>
+</section>
+<section id="testimonials" class="page hidden"><div class="card"><h2>Testimoni</h2><div id="testimonialList"></div><hr>
+<h3>Kirim Testimoni</h3><input id="tName" placeholder="Nama"><textarea id="tText" placeholder="Tulis pengalaman..."></textarea><button onclick="addTestimonial()">Kirim</button></div></section>
+
+<section id="adminLogin" class="page hidden">
+<div class="card" style="max-width:430px;margin:auto"><h2>🔐 Login Admin</h2>
+<label>Kata Sandi</label><input id="adminPass" type="password" autocomplete="current-password">
+<button onclick="login()">Masuk</button><div id="loginMsg"></div></div>
+</section>
+
+<section id="admin" class="page hidden">
+<div class="card" style="margin-bottom:16px"><h2 style="margin-top:0">⚡ CONTROL CENTER</h2><p class="muted">Kelola PINZZJR7 dari satu panel.</p><div class="tabs"><button onclick="adminTab('dashboard')">Dashboard</button><button onclick="adminTab('products')">Produk</button><button onclick="adminTab('ordersAdmin')">Pesanan</button><button onclick="adminTab('settings')">Pengaturan</button><button onclick="adminLogout()" class="danger">Keluar</button></div></div>
+<div id="dashboard" class="adminTab">
+<div class="grid"><div class="card"><div class="muted">📦 Total Orderan</div><div id="sTotal" class="stat">0</div></div><div class="card"><div class="muted">⏳ Menunggu</div><div id="sPending" class="stat">0</div></div><div class="card"><div class="muted">✅ Dikonfirmasi</div><div id="sConfirmed" class="stat">0</div></div></div>
+</div>
+<div id="products" class="adminTab hidden"><div class="card"><h2>Kelola Produk</h2><input type="hidden" id="editId"><label>Nama</label><input id="pName"><label>Harga</label><input id="pPrice" type="number"><label>Deskripsi</label><textarea id="pDesc"></textarea><label>Upload Gambar Produk</label><input id="pImageFile" type="file" accept="image/*">
+<img id="pImagePreview" class="preview hidden">
+<input type="hidden" id="pImage"><label>Link Produk (rahasia sebelum konfirmasi)</label><input id="pLink"><button onclick="saveProduct()">Simpan Produk</button><div id="adminProducts"></div></div></div>
+<div id="ordersAdmin" class="adminTab hidden"><div class="card"><h2>Semua Pesanan</h2><div id="adminOrders"></div></div></div>
+<div id="settings" class="adminTab hidden"><div class="card"><h2>Pengaturan Website</h2>
+<label>Nama Website</label><input id="setTitle"><label>Deskripsi</label><textarea id="setDesc"></textarea>
+<label>Nomor DANA</label><input id="setDana"><label>Atas Nama DANA</label><input id="setDanaName">
+<label>Upload Gambar QRIS</label>
+<input id="setQrisFile" type="file" accept="image/*">
+<img id="setQrisPreview" class="preview hidden" alt="Preview QRIS">
+<input type="hidden" id="setQris">
+<label>Atas Nama QRIS</label><input id="setQrisName">
+<label>Nomor WhatsApp Admin (format internasional)</label><input id="setWa">
+<label>Upload Musik / Lagu Latar</label><input id="setMusicFile" type="file" accept="audio/*">
+<audio id="musicPreview" controls class="hidden" style="width:100%;margin:8px 0"></audio>
+<input type="hidden" id="setMusic">
+<label>Ganti Kata Sandi Admin</label><input id="setPass" type="password" placeholder="Kosongkan jika tidak ingin mengubah">
+<button onclick="saveSettings()">Simpan Semua Pengaturan</button><div id="setMsg"></div>
+</div></div>
+</section>
+</main>
+
+<div id="musicBar"><button class="secondary" onclick="toggleMusic()">🎵 Play/Pause</button></div>
+<audio id="music" loop></audio>
+<footer>PINZZJR7 • Sistem toko digital</footer>
+
+<script>
+const KEY='pinzzjr7_data_v1';
+const defaults={
+settings:{title:'PINZZJR7',desc:'Toko digital terpercaya.',dana:'',danaName:'',qris:'',qrisName:'',wa:'',music:'',adminPass:'pinzzjr708'},
+products:[
+{id:1,name:'Produk Digital 1',price:25000,desc:'Contoh produk digital.',image:'',link:'https://example.com/produk'}
+],
+orders:[],testimonials:[]
+};
+let data=JSON.parse(localStorage.getItem(KEY)||'null')||defaults;
+if(!localStorage.getItem('pinzzjr7_browser_id')) localStorage.setItem('pinzzjr7_browser_id',crypto.randomUUID?.()||String(Date.now())+Math.random());
+const browserId=localStorage.getItem('pinzzjr7_browser_id');
+function save(){localStorage.setItem(KEY,JSON.stringify(data))}
+function readFileAsDataURL(file, cb){if(!file){cb(null);return}const r=new FileReader();r.onload=e=>cb(e.target.result);r.readAsDataURL(file)}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function rupiah(n){return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(n)}
+function showPage(id){
+document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));
+document.getElementById(id).classList.remove('hidden');
+if(id==='home')renderProducts();if(id==='orders')renderMyOrders();if(id==='testimonials')renderTestimonials();
+if(id==='adminLogin' && !sessionStorage.admin){} if(id==='admin'&&sessionStorage.admin)renderAdmin();
+}
+function renderBase(){brand.textContent=data.settings.title;siteTitle.textContent=data.settings.title;siteDesc.textContent=data.settings.desc;waTop.href=data.settings.wa?'https://wa.me/'+data.settings.wa.replace(/\D/g,''): '#';music.src=data.settings.music||''}
+function renderPublicProducts(){
+const grid=document.getElementById('publicProductsGrid');
+if(!grid)return;
+if(!data.products.length){grid.innerHTML='<div class="notice">Belum ada produk tersedia.</div>';return;}
+grid.innerHTML=data.products.map(p=>`
+<article class="card product-card">
+${p.image?`<img src="${esc(p.image)}" alt="${esc(p.name)}" style="width:100%;max-height:220px;object-fit:cover;border-radius:14px;margin-bottom:12px">`:''}
+<h3>${esc(p.name)}</h3>
+<p class="muted">${esc(p.desc||'')}</p>
+<div class="price">Rp ${Number(p.price||0).toLocaleString('id-ID')}</div>
+<button onclick="openCheckout('${p.id}')">Beli Sekarang</button>
+</article>`).join('');
+}
+function renderProducts(){productGrid.innerHTML=data.products.map(p=>`<div class="card product"><img src="${esc(p.image||'')}" onerror="this.style.display='none'"><h3>${esc(p.name)}</h3><p class="muted">${esc(p.desc)}</p><div class="price">${rupiah(p.price)}</div><br><button onclick="checkout(${p.id})">Beli Sekarang</button></div>`).join('')}
+let selectedProduct=null;
+function checkout(id){selectedProduct=data.products.find(p=>p.id===id);checkoutProduct.innerHTML='<h3>'+esc(selectedProduct.name)+'</h3><p>'+rupiah(selectedProduct.price)+'</p>';showPage('checkout')}
+function renderPayment(){let v=payment.value;if(v==='DANA')paymentInfo.innerHTML=`<div class="notice">💳 DANA<br><b>Nomor:</b> ${esc(data.settings.dana||'Belum diatur')}<br><b>Atas Nama:</b> ${esc(data.settings.danaName||'Belum diatur')}</div>`;else if(v==='QRIS')paymentInfo.innerHTML=`<div class="notice">💳 QRIS<br>${data.settings.qris?`<img class="qris" src="${esc(data.settings.qris)}">`:'Gambar QRIS belum diatur'}<br><b>Atas Nama:</b> ${esc(data.settings.qrisName||'Belum diatur')}</div>`;else paymentInfo.innerHTML=''}
+proof.onchange=()=>{let f=proof.files[0];if(f){let r=new FileReader();r.onload=e=>{proofPreview.src=e.target.result;proofPreview.classList.remove('hidden')};r.readAsDataURL(f)}}
+function submitOrder(){
+if(!selectedProduct)return;let n=buyerName.value.trim(),w=buyerWa.value.trim(),e=buyerEmail.value.trim(),pay=payment.value,f=proof.files[0];
+if(!n||!w||!e||!pay||!f){checkoutMsg.innerHTML='<div class="notice error">Nama, nomor WhatsApp, Gmail/email, metode pembayaran, dan bukti transfer wajib diisi.</div>';return}
+if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){checkoutMsg.innerHTML='<div class="notice error">Alamat Gmail/email tidak valid.</div>';return}
+let reader=new FileReader();reader.onload=ev=>{let o={id:Date.now(),browserId:browserId,buyerName:n,buyerWa:w,buyerEmail:e,productId:selectedProduct.id,product:selectedProduct.name,price:selectedProduct.price,payment:pay,proof:ev.target.result,status:'Menunggu',link:null,emailSent:false,created:new Date().toLocaleString('id-ID')};data.orders.push(o);save();checkoutMsg.innerHTML='<div class="notice success">Pesanan berhasil dikirim. Simpan halaman ini untuk melihat status pesanan.</div>';if(data.settings.wa){let msg=`HALO ADMIN PINZZJR7, SAYA INGIN ORDER:%0A%0APembeli: ${encodeURIComponent(n)}%0AWA Pembeli: ${encodeURIComponent(w)}%0AGmail Pembeli: ${encodeURIComponent(e)}%0A%0A1. ${encodeURIComponent(selectedProduct.name)} - Rp ${selectedProduct.price}%0A%0ATOTAL PEMBAYARAN: Rp ${selectedProduct.price}%0AMETODE: ${encodeURIComponent(pay)}%0A%0AMohon diproses kak!`;window.open('https://wa.me/'+data.settings.wa.replace(/\\D/g,'')+'?text='+msg,'_blank')};renderProducts()};reader.readAsDataURL(f)}
+function renderMyOrders(){
+  const mine=data.orders.filter(o=>o.browserId===browserId);
+  if(!mine.length){myOrders.innerHTML='<div class="notice">Belum ada pesanan dari perangkat ini.</div>';return}
+  myOrders.innerHTML=mine.map(o=>`<div class="card order">
+    <b>${esc(o.product)}</b><br>
+    Harga: <b>${rupiah(o.price)}</b><br>
+    Metode pembayaran: ${esc(o.payment)}<br>
+    Nama pembeli: ${esc(o.buyerName)}<br>
+    Status: <span class="badge">${esc(o.status)}</span>
+    ${o.status==='Sudah Dikonfirmasi'&&o.link?
+      `<div class="notice success"><b>✅ Pesanan disetujui!</b><br>Link produk:<br>
+      <a href="${esc(o.link)}" target="_blank" rel="noopener">${esc(o.link)}</a>
+      <br><button onclick="navigator.clipboard?.writeText(${JSON.stringify(o.link)})">Salin Link</button>
+      <p class="muted">Link produk tersedia setelah admin memeriksa bukti pembayaran.</p></div>`:
+      `<div class="notice">⏳ Pesanan sedang diperiksa admin. Link produk belum tersedia.</div>`}
+  </div>`).join('');
+}
+function addTestimonial(){let n=tName.value.trim(),t=tText.value.trim();if(!n||!t)return;data.testimonials.push({n,t});save();tName.value='';tText.value='';renderTestimonials()}
+function renderTestimonials(){testimonialList.innerHTML=data.testimonials.length?data.testimonials.map(x=>`<div class="card"><b>${esc(x.n)}</b><p>${esc(x.t)}</p></div>`).join(''):'Belum ada testimoni.'}
+function login(){if(adminPass.value===data.settings.adminPass){sessionStorage.admin='1';adminPass.value='';showPage('admin')}else loginMsg.innerHTML='<div class="notice error">Kata sandi salah.</div>'}
+function adminLogout(){sessionStorage.removeItem('admin');showPage('home')}
+function adminTab(id){document.querySelectorAll('.adminTab').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');if(id==='dashboard'||id==='ordersAdmin')renderAdmin();if(id==='products')renderAdminProducts();if(id==='settings')loadSettings()}
+function renderAdmin(){sTotal.textContent=data.orders.length;sPending.textContent=data.orders.filter(o=>o.status==='Menunggu').length;sConfirmed.textContent=data.orders.filter(o=>o.status==='Sudah Dikonfirmasi').length;renderAdminOrders();renderAdminProducts()}
+function renderAdminOrders(){adminOrders.innerHTML=data.orders.length?data.orders.map(o=>`<div class="card order"><b>${esc(o.product)}</b> — ${rupiah(o.price)}<br>👤 ${esc(o.buyerName)}<br>📱 ${esc(o.buyerWa)}<br>✉️ ${esc(o.buyerEmail)}<br>💳 ${esc(o.payment)}<br>🕒 ${esc(o.created)}<br><span class="badge">${esc(o.status)}</span><br><img class="preview" src="${esc(o.proof)}"><label>Link produk</label><input id="link_${o.id}" value="${esc(data.products.find(p=>p.id===o.productId)?.link||'')}"><button class="ok" onclick="confirmOrder(${o.id})">KONFIRMASI PRODUK</button> <button class="danger" onclick="rejectOrder(${o.id})">TOLAK</button></div>`).join(''):'Belum ada pesanan.'}
+function confirmOrder(id){let o=data.orders.find(x=>x.id===id);if(!o)return;let p=data.products.find(x=>x.id===o.productId);let link=document.getElementById('link_'+id).value.trim();if(!link){alert('Link produk wajib diisi.');return}o.link=link;o.status='Sudah Dikonfirmasi';save();renderAdmin();alert('Pesanan dikonfirmasi. Link sekarang tersedia di Pesanan Saya. Pengiriman Gmail otomatis memerlukan backend/email service.')}
+function rejectOrder(id){let o=data.orders.find(x=>x.id===id);if(o){o.status='Ditolak';save();renderAdmin()}}
+function renderAdminProducts(){adminProducts.innerHTML=data.products.map(p=>`<div class="card"><b>${esc(p.name)}</b> — ${rupiah(p.price)}<br><button class="secondary" onclick="editProduct(${p.id})">Edit</button> <button class="danger" onclick="deleteProduct(${p.id})">Hapus</button></div>`).join('')}
+function saveProduct(){
+  const name=pName.value.trim();
+  const price=Number(pPrice.value||0);
+  const desc=pDesc.value.trim();
+  const link=pLink.value.trim();
+  const editId=document.getElementById('editProductId')?.value||'';
+  if(!name||!price||!link){
+    productMsg.innerHTML='<div class="notice error">Nama, harga, dan link produk wajib diisi.</div>';
+    return;
+  }
+  const file=pImageFile?.files?.[0];
+  const finish=(imageData)=>{
+    const image=imageData || pImage.value.trim();
+    if(editId){
+      const item=data.products.find(x=>String(x.id)===String(editId));
+      if(item){
+        item.name=name; item.price=price; item.desc=desc; item.link=link;
+        if(imageData) item.image=imageData;
+        else if(image) item.image=image;
+      }
+    }else{
+      data.products.push({
+        id:Date.now()+Math.floor(Math.random()*1000),
+        name,price,desc,image,link
+      });
+    }
+    save();
+    rend
