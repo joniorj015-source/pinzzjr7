@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEBSITE KHUSUS PERTANYAAN DARI BAMA</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:linear-gradient(135deg,#1e1b4b,#312e81);color:#fff;min-height:100vh;padding:15px}
+.wadah{max-width:600px;margin:0 auto}
+.atas{display:flex;justify-content:space-between;align-items:center;padding:10px 0 20px}
+.tombol{padding:10px 18px;border-radius:10px;border:none;cursor:pointer;font-size:15px;font-weight:bold}
+.tombol-ungu{background:linear-gradient(135deg,#8b5cf6,#3b82f6);color:#fff}
+.tombol-hijau{background:#10b981;color:#fff}
+.tombol-merah{background:#ef4444;color:#fff}
+.tombol-abu{background:#4b5563;color:#fff}
+.kartu{background:rgba(255,255,255,0.1);padding:22px;border-radius:18px;border:1px solid rgba(255,255,255,0.15);margin-bottom:15px}
+.judul{text-align:center;margin-bottom:20px}
+.sembunyi{display:none !important}
+.masukkan{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.3);background:rgba(0,0,0,0.25);color:#fff;margin:8px 0;font-size:15px}
+.masukkan:focus{outline:none;border-color:#8b5cf6}
+label{display:block;margin-top:10px;margin-bottom:4px;font-size:14px;color:#ddd}
+.baris{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.baris .tombol{flex:1;min-width:100px}
+.daftar-item{padding:12px;background:rgba(0,0,0,0.2);border-radius:10px;margin:8px 0;border-left:3px solid #8b5cf6}
+.pilihan{display:block;width:100%;text-align:left;padding:13px;margin:7px 0;border-radius:10px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;cursor:pointer;font-size:15px}
+.pilihan:hover{background:rgba(139,92,246,0.35);border-color:#8b5cf6}
+textarea{min-height:90px;resize:vertical}
+.popup{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:15px;z-index:999}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}
+.nav button{padding:8px 12px;font-size:14px}
+.aktif{background:#8b5cf6}
+</style>
+</head>
+<body>
+
+<div class="wadah">
+  <!-- ATAS -->
+  <div class="atas">
+    <h2>💜 PINZZJR7</h2>
+    <button class="tombol tombol-ungu" onclick="bukaPopupAdmin()">🔐 Admin</button>
+  </div>
+
+  <!-- HALAMAN UTAMA -->
+  <div id="halamanUtama">
+    <div class="kartu judul">
+      <h1>✨ PERTANYAAN DARI BAMA ✨</h1>
+      <p>Pilih daftar pertanyaan di bawah ini 😊</p>
+    </div>
+    <div id="daftarTarget"></div>
+  </div>
+
+  <!-- HALAMAN PERTANYAAN -->
+  <div id="halamanPertanyaan" class="sembunyi">
+    <div class="kartu">
+      <button class="tombol tombol-abu" onclick="kembali()" style="margin-bottom:15px">← Kembali</button>
+      <h3 id="namaTarget"></h3>
+      <hr style="border:0;border-top:1px solid rgba(255,255,255,0.2);margin:10px 0 15px">
+      <div id="isiPertanyaan"></div>
+    </div>
+  </div>
+
+  <!-- POPUP MASUK ADMIN -->
+  <div id="popupAdminMasuk" class="popup sembunyi">
+    <div class="kartu" style="width:100%;max-width:420px">
+      <h2 style="text-align:center;margin-bottom:15px">🔐 Masuk Admin</h2>
+      <input type="password" id="kataSandiAdmin" class="masukkan" placeholder="Masukkan kata sandi...">
+      <div class="baris">
+        <button class="tombol tombol-abu" onclick="tutupPopupAdmin()">Batal</button>
+        <button class="tombol tombol-hijau" onclick="cekSandiAdmin()">Masuk</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HALAMAN ADMIN PENUH -->
+  <div id="halamanAdmin" class="sembunyi">
+    <div class="kartu">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
+        <h2>⚙️ PANEL ADMIN</h2>
+        <button class="tombol tombol-merah" onclick="keluarAdmin()">Keluar</button>
+      </div>
+      <div class="nav">
+        <button class="tombol aktif" id="tab1" onclick="bukaTab(1)">Daftar Target</button>
+        <button class="tombol" id="tab2" onclick="bukaTab(2)">Tambah Target</button>
+        <button class="tombol" id="tab3" onclick="bukaTab(3)">Tambah Pertanyaan</button>
+        <button class="tombol" id="tab4" onclick="bukaTab(4)">Pengaturan</button>
+      </div>
+      <hr style="border:0;border-top:1px solid rgba(255,255,255,0.2);margin:10px 0 15px">
+
+      <!-- TAB 1: DAFTAR -->
+      <div id="isiTab1">
+        <h3>Daftar Target & Pertanyaan</h3>
+        <div id="daftarTargetAdmin"></div>
+      </div>
+
+      <!-- TAB 2: TAMBAH TARGET -->
+      <div id="isiTab2" class="sembunyi">
+        <h3>Tambah Target Baru</h3>
+        <label>Nama Target:</label>
+        <input type="text" id="namaTargetBaru" class="masukkan" placeholder="Contoh: Doli 💙">
+        <label>Deskripsi Singkat:</label>
+        <input type="text" id="deskripsiTargetBaru" class="masukkan" placeholder="Contoh: Khusus untuk Doli">
+        <button class="tombol tombol-hijau" onclick="simpanTargetBaru()" style="margin-top:10px;width:100%">✅ Simpan Target</button>
+      </div>
+
+      <!-- TAB 3: TAMBAH PERTANYAAN -->
+      <div id="isiTab3" class="sembunyi">
+        <h3>Tambah Pertanyaan</h3>
+        <label>Pilih Target:</label>
+        <select id="pilihTarget" class="masukkan"></select>
+        <label>Teks Pertanyaan:</label>
+        <textarea id="teksPertanyaanBaru" class="masukkan" placeholder="Tulis pertanyaan di sini..."></textarea>
+        <label>Jenis Jawaban:</label>
+        <select id="jenisPertanyaan" class="masukkan" onchange="ubahJenis()">
+          <option value="pilihan">Pilihan Ganda</option>
+          <option value="isian">Isian Bebas</option>
+        </select>
+        <div id="bagianPilihan">
+          <label>Pilihan Jawaban (pisah dengan tanda garis miring tanpa spasi: A/B/C):</label>
+          <input type="text" id="opsiJawaban" class="masukkan" placeholder="Contoh: Bagus/Biasa/Kurang">
+        </div>
+        <button class="tombol tombol-hijau" onclick="simpanPertanyaanBaru()" style="margin-top:10px;width:100%">✅ Simpan Pertanyaan</button>
+      </div>
+
+      <!-- TAB 4: PENGATURAN -->
+      <div id="isiTab4" class="sembunyi">
+        <h3>Pengaturan</h3>
+        <label>Kata Sandi Admin:</label>
+        <input type="text" id="sandiBaru" class="masukkan" placeholder="Ubah kata sandi baru" value="admin123">
+        <button class="tombol tombol-hijau" onclick="ubahSandi()" style="margin-top:10px;width:100%">✅ Simpan Kata Sandi</button>
+        <hr style="border:0;border-top:1px solid rgba(255,255,255,0.2);margin:15px 0">
+        <h3>🔄 Versi & Pembaruan</h3>
+        <p style="font-size:14px;color:#aaa;margin:5px 0">Setelah simpan perubahan, ubah angka versi lalu buka alamat pakai ?v=angka</p>
+        <label>Angka Versi Saat Ini:</label>
+        <input type="number" id="angkaVersi" class="masukkan" value="1">
+        <button class="tombol tombol-ungu" onclick="tambahVersi()" style="margin-top:10px;width:100% ">🔄 Tambah Versi</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ======================================
+// PENGATURAN AWAL
+// ======================================
+let SANDI_ADMIN = "admin123";
+const KUNCI_DATA = "data_pertanyaan_bama";
+const KUNCI_SANDI = "sandi_admin_bama";
+let targetAktif = null;
+
+// Data Awal
+let data = [
+  {
+    nama: "Doli 💙",
+    deskripsi: "Pertanyaan khusus untuk Doli 😄",
+    daftar: [
+      {teks: "Menurutmu website ini bagaimana?", jenis: "pilihan", opsi: ["Sangat Bagus", "Bagus", "Biasa Saja", "Kurang Bagus"]},
+      {teks: "Seberapa seru pertanyaan ini?", jenis: "pilihan", opsi: ["⭐⭐⭐⭐⭐", "⭐⭐⭐⭐", "⭐⭐⭐", "⭐⭐"]},
+      {teks: "Tulis pesan untuk Bama:", jenis: "isian"}
+    ]
+  }
+];
+
+// ======================================
+// SIMPAN & AMBIL DATA
+// ======================================
+function ambilData() {
+  let simpanan = localStorage.getItem(KUNCI_DATA);
+  if(simpanan) data = JSON.parse(simpanan);
+  let simpanSandi = localStorage.getItem(KUNCI_SANDI);
+  if(simpanSandi) SANDI_ADMIN = simpanSandi;
+  document.getElementById("sandiBaru").value = SANDI_ADMIN;
+  tampilkanSemua();
+}
+function simpanData() {
+  localStorage.setItem(KUNCI_DATA, JSON.stringify(data));
+  localStorage.setItem(KUNCI_SANDI, SANDI_ADMIN);
+  tampilkanSemua();
+}
+
+// ======================================
+// TAMPILAN
+// ======================================
+function tampilkanSemua() {
+  tampilkanDaftarTarget();
+  tampilkanDaftarTargetAdmin();
+  isiPilihanTarget();
+}
+
+function tampilkanDaftarTarget() {
+  let html = "";
+  data.forEach((item, i) => {
+    html += `<div class="kartu">
+      <h3>${item.nama}</h3>
+      <p style="color:#aaa;margin:5px 0 10px">${item.deskripsi}</p>
+      <button class="tombol tombol-hijau" style="width:100%" onclick="bukaTarget(${i})">📝 Mulai Menjawab</button>
+    </div>`;
+  });
+  document.getElementById("daftarTarget").innerHTML = html;
+}
+
+function tampilkanDaftarTargetAdmin() {
+  let html = "";
+  data.forEach((item, i) => {
+    html += `<div class="daftar-item">
+      <strong>${item.nama}</strong> — ${item.daftar.length} pertanyaan
+      <button class="tombol tombol-merah" style="padding:4px 8px;font-size:12px;float:right" onclick="hapusTarget(${i})">Hapus</button>
+    </div>`;
+  });
+  if(data.length === 0) html = "<p style='color:#aaa'>Belum ada target. Tambah dari tab Tambah Target.</p>";
+  document.getElementById("daftarTargetAdmin").innerHTML = html;
+}
+
+function isiPilihanTarget() {
+  let html = "";
+  data.forEach((item, i) => {
+    html += `<option value="${i}">${item.nama}</option>`;
+  });
+  document.getElementById("pilihTarget").innerHTML = html;
+}
+
+// ======================================
+// BUKA JAWABAN
+// ======================================
+function bukaTarget(index) {
+  targetAktif = index;
+  document.getElementById("halamanUtama").classList.add("sembunyi");
+  document.getElementById("halamanPertanyaan").classList.remove("sembunyi");
+  document.getElementById("namaTarget").textContent = data[index].nama;
+  tampilkanPertanyaan(index);
+}
+
+function tampilkanPertanyaan(index) {
+  let html = "";
+  data[index].daftar.forEach((p, i) => {
+    html += `<div style="margin-bottom:18px">
+      <p style="font-weight:bold;margin-bottom:8px">${i+1}. ${p.teks}</p>`;
+    if(p.jenis === "pilihan") {
+      p.opsi.forEach((o, j) => {
+        html += `<button class="pilihan" onclick="pilihJawaban(${i},'${o.replace(/'/g,"\\'")}')">${String.fromCharCode(65+j)}. ${o}</button>`;
+      });
+    } else {
+      html += `<textarea class="masukkan" placeholder="Tulis jawabanmu di sini..."></textarea>`;
+    }
+    html += `</div>`;
+  });
+  document.getElementById("isiPertanyaan").innerHTML = html;
+}
+
+function pilihJawaban(nomor, teks) {
+  alert("✅ Jawaban dipilih: " + teks);
+}
+
+function kembali() {
+  document.getElementById("halamanUtama").classList.remove("sembunyi");
+  document.getElementById("halamanPertanyaan").classList.add("sembunyi");
+  targetAktif = null;
+}
+
+// ======================================
+// FUNGSI ADMIN
+// ======================================
+function bukaPopupAdmin() {
+  document.getElementById("popupAdminMasuk").classList.remove("sembunyi");
+  document.getElementById("kataSandiAdmin").value = "";
+}
+function tutupPopupAdmin() {
+  document.getElementById("popupAdminMasuk").classList.add("sembunyi");
+}
+function cekSandiAdmin() {
+  let ketik = document.getElementById("kataSandiAdmin").value.trim();
+  if(ketik === SANDI_ADMIN) {
+    tutupPopupAdmin();
+    bukaHalamanAdmin();
+  } else {
+    alert("❌ Kata sandi salah!");
+  }
+}
+function bukaHalamanAdmin() {
+  document.getElementById("halamanUtama").classList.add("sembunyi");
+  document.getElementById("halamanPertanyaan").classList.add("sembunyi");
+  document.getElementById("halamanAdmin").classList.remove("sembunyi");
+  bukaTab(1);
+}
+function keluarAdmin() {
+  document.getElementById("halamanAdmin").classList.add("sembunyi");
+  document.getElementById("halamanUtama").classList.remove("sembunyi");
+}
+
+// ======================================
+// TAB
+// ======================================
+function bukaTab(nomor) {
+  for(let i=1; i<=4; i++) {
+    document.getElementById("isiTab"+i).classList.add("sembunyi");
+    document.getElementById("tab"+i).classList.remove("aktif");
+  }
+  document.getElementById("isiTab"+nomor).classList.remove("sembunyi");
+  document.getElementById("tab"+nomor).classList.add("aktif");
+}
+
+// ======================================
+// TAMBAH TARGET
+// ======================================
+function simpanTargetBaru() {
+  let nama = document.getElementById("namaTargetBaru").value.trim();
+  let desk = document.getElementById("deskripsiTargetBaru").value.trim();
+  if(!nama) { alert("⚠️ Nama target tidak boleh kosong!"); return }
+  data.push({nama:nama, deskripsi:desk, daftar:[]});
+  simpanData();
+  document.getElementById("namaTargetBaru").value = "";
+  document.getElementById("deskripsiTargetBaru").value = "";
+  alert("✅ Target berhasil ditambahkan!");
+}
+
+function hapusTarget(index) {
+  if(confirm("⚠️ Yakin ingin dihapus?")) {
+    data.splice(index,1);
+    simpanData();
+  }
+}
+
+// ======================================
+// TAMBAH PERTANYAAN
+// ======================================
+function ubahJenis() {
+  let jenis = document.getElementById("jenisPertanyaan").value;
+  document.getElementById("bagianPilihan").style.display = (jenis==="pilihan")?"block":"none";
+}
+
+function simpanPertanyaanBaru() {
+  let idx = parseInt(document.getElementById("pilihTarget").value);
+  let teks = document.getElementById("teksPertanyaanBaru").value.trim();
+  let jenis = document.getElementById("jenisPertanyaan").value;
+  let opsiTeks = document.getElementById("opsiJawaban").value.trim();
+
+  if(!teks) { alert("⚠️ Teks pertanyaan tidak boleh kosong!"); return }
+
+  let pertanyaanBaru = {teks:teks, jenis:jenis};
+  if(jenis==="pilihan") {
+    if(!opsiTeks) { alert("⚠️ Isi pilihan jawaban!"); return }
+    pertanyaanBaru.opsi = opsiTeks.split("/").map(x=>x.trim()).filter(x=>x);
+  }
+
+  data[idx].daftar.push(pertanyaanBaru);
+  simpanData();
+  document.getElementById("teksPertanyaanBaru").value = "";
+  document.getElementById("opsiJawaban").value = "";
+  alert("✅ Pertanyaan berhasil ditambahkan!");
+}
+
+// ======================================
+// PENGATURAN
+// ======================================
+function ubahSandi() {
+  let baru = document.getElementById("sandiBaru").value.trim();
+  if(!baru) { alert("⚠️ Kata sandi tidak boleh kosong!"); return }
+  SANDI_ADMIN = baru;
+  simpanData();
+  alert("✅ Kata sandi berhasil diubah!");
+}
+
+function tambahVersi() {
+  let v = parseInt(document.getElementById("angkaVersi").value) || 1;
+  document.getElementById("angkaVersi").value = v + 1;
+  alert(`✅ Versi dinaikkan ke ${v+1}!\nBuka alamat pakai ?v=${v+1}`);
+}
+
+// ======================================
+// PEMBARUAN OTOMATIS
+// ======================================
+let versiLama = localStorage.getItem("versi_web") || "1";
+setInterval(() => {
+  fetch(window.location.href + "?cek=" + Date.now(), {cache: "no-store"})
+  .then(r => r.text())
+  .then(t => {
+    let vBaru = t.match(/VERSI:(.+)/);
+    if(vBaru && vBaru[1] !== versiLama) {
+      versiLama = vBaru[1];
+      localStorage.setItem("versi_web", versiLama);
+      if(confirm("🔄 ADA PEMBARUAN BARU! Muat ulang sekarang?")) {
+        location.reload();
+      }
+    }
+  });
+}, 30000);
+
+// ======================================
+// MULAI
+// ======================================
+ambilData();
+ubahJenis();
+</script>
+<!-- VERSI:5 -->
+</body>
+  </html>
+  
