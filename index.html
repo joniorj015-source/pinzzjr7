@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#17152b">
+<title>WEBSITE KHUSUS PERTANYAN DARI BAMA</title>
+<style>
+:root{--bg:#0d0b18;--card:rgba(255,255,255,.08);--text:#fff;--muted:#b9b4d0;--primary:#7c3aed;--secondary:#2563eb;--border:rgba(255,255,255,.13);--danger:#ef4444;--ok:#22c55e}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,sans-serif;background:radial-gradient(circle at top,#251653 0,#0d0b18 48%,#080711 100%);color:var(--text);min-height:100vh}button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}.hidden{display:none!important}.app{max-width:1100px;margin:auto;padding:18px}.glass{background:var(--card);border:1px solid var(--border);backdrop-filter:blur(18px);border-radius:24px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,var(--primary),var(--secondary));font-weight:900}.brand strong{display:block}.brand small{color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{padding:11px 15px;border-radius:14px;color:#fff;background:rgba(255,255,255,.09);border:1px solid var(--border);transition:.2s}.btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.14)}.primary{background:linear-gradient(135deg,var(--primary),var(--secondary));border:0}.hero{padding:32px;text-align:center;margin-bottom:18px}.hero h1{font-size:clamp(28px,6vw,52px);margin:8px 0 12px}.hero p{color:var(--muted);max-width:700px;margin:0 auto 22px;line-height:1.6}.target-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}.target-card{padding:20px;border-radius:16px;background:var(--card);border:1px solid var(--border)}.section{padding:22px;margin-bottom:18px}.section-title{display:flex;justify-content:space-between;align-items:center}.question-card{padding:22px;border-radius:16px;background:var(--card);border:1px solid var(--border)}.qmeta{color:var(--muted);font-size:13px;margin-bottom:8px}.options{display:grid;gap:10px}.option{padding:15px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid var(--border);color:#fff;text-align:left}.option:hover,.option.selected{background:linear-gradient(135deg,rgba(124,58,237,.45),rgba(37,99,235,.35))}textarea,input,select{width:100%;padding:13px 14px;border-radius:10px;border:1px solid var(--border);background:rgba(0,0,0,.2);color:#fff}.progress{height:9px;background:rgba(255,255,255,.1);border-radius:20px;overflow:hidden;margin:10px 0}.progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary))}.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:grid;place-items:center;padding:18px;z-index:100}.modal-card{width:min(450px,100%);padding:24px;border-radius:20px;background:#1a172e;border:1px solid var(--border)}.toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,20px);opacity:0;background:#17152b;border:1px solid var(--border);padding:12px 20px;border-radius:12px;z-index:99}.toast.show{opacity:1;transform:translate(-50%,0)}.music{padding:15px;border-radius:16px;background:var(--card);border:1px solid var(--border);margin-bottom:15px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}.footer{text-align:center;color:var(--muted);padding:20px}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand"><div class="logo">BA</div><div><strong>WEBSITE KHUSUS PERTANYAN DARI BAMA</strong><small>Platform pertanyaan interaktif</small></div></div>
+  <div class="actions"><button class="btn" onclick="bukaAdmin()">🔐 Admin</button></div>
+</header>
+
+<div id="halamanUtama">
+  <section class="hero">
+    <h1>✨ Selamat Datang ✨</h1>
+    <p>Pilih daftar pertanyaan di bawah ini untuk mulai menjawab ya 😊</p>
+  </section>
+  <section class="section">
+    <div class="section-title"><h2>Pilih Pertanyaan:</h2></div>
+    <div class="target-grid" id="daftarTarget"></div>
+  </section>
+</div>
+
+<div class="modal hidden" id="modalAdmin">
+  <div class="modal-card">
+    <h2>🔐 Masuk Admin</h2>
+    <p>Masukkan kata sandi untuk mengelola pertanyaan:</p>
+    <input type="password" id="kataSandi" placeholder="Ketik kata sandi...">
+    <div style="margin-top:15px;display:flex;gap:8px">
+      <button class="btn" onclick="tutupAdmin()">Batal</button>
+      <button class="btn primary" onclick="cekSandi()">Masuk</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="pesan"></div>
+</div>
+
+<script>
+const SANDI_ADMIN = "admin123";
+const KUNCI_DATA = "data_pertanyaan_bama";
+
+// Data awal
+let data = {
+  target: [
+    {
+      nama: "Doli 💙",
+      deskripsi: "Pertanyaan khusus untuk Doli 😄",
+      pertanyaan: [
+        {teks: "Menurutmu website ini bagaimana?", jenis: "pilihan", opsi: ["Bagus sekali", "Bagus", "Biasa saja", "Kurang bagus"]},
+        {teks: "Tulis pesan singkat untuk Bama:", jenis: "isian"}
+      ]
+    }
+  ],
+  musik: {nama: "", link: ""}
+};
+
+// Simpan & ambil data
+function ambilData() {
+  let simpanan = localStorage.getItem(KUNCI_DATA);
+  if(simpanan) data = JSON.parse(simpanan);
+  tampilkanTarget();
+}
+function simpanData() {
+  localStorage.setItem(KUNCI_DATA, JSON.stringify(data));
+  tampilkanTarget();
+}
+
+// Tampilkan daftar target
+function tampilkanTarget() {
+  let html = "";
+  data.target.forEach((t, i) => {
+    html += `<div class="target-card">
+      <h3>${t.nama}</h3>
+      <p>${t.deskripsi}</p>
+      <button class="btn primary">Buka Pertanyaan</button>
+    </div>`;
+  });
+  document.getElementById("daftarTarget").innerHTML = html;
+}
+
+// Fungsi Admin
+function bukaAdmin() {
+  document.getElementById("modalAdmin").classList.remove("hidden");
+}
+function tutupAdmin() {
+  document.getElementById("modalAdmin").classList.add("hidden");
+}
+function cekSandi() {
+  let sandi = document.getElementById("kataSandi").value;
+  if(sandi === SANDI_ADMIN) {
+    tutupAdmin();
+    alert("✅ Berhasil masuk! \n\n⚠️ Maaf, fitur lengkap admin sedang diperbaiki. Tambah pertanyaan sementara lewat kode HTML dulu ya.");
+  } else {
+    alert("❌ Kata sandi salah!");
+  }
+}
+
+// Cek pembaruan otomatis
+let versiLama = localStorage.getItem("versi_web") || "v1";
+setInterval(() => {
+  fetch(window.location.href + "?cek=" + Date.now(), {cache: "no-store"})
+  .then(r => r.text())
+  .then(t => {
+    let vBaru = t.match(/VERSI:(.+)/);
+    if(vBaru && vBaru[1] !== versiLama) {
+      versiLama = vBaru[1];
+      localStorage.setItem("versi_web", versiLama);
+      if(confirm("🔄 ADA PEMBARUAN BARU! Muat ulang sekarang?")) location.reload();
+    }
+  });
+}, 30000);
+
+// Jalankan saat halaman dibuka
+ambilData();
+</script>
+<!-- VERSI:2026-09-08-1 -->
+</body>
+</html>
